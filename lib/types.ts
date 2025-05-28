@@ -1,22 +1,3 @@
-export interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  imageUrl: string;
-}
-
-export interface Seller {
-  id: number;
-  name: string;
-  feedback: number;
-  joined: string;
-  responseTime: string;
-  description: string;
-  totalFeedback?: string;
-  feedbackCount?: string;
-  imageUrl?: string;
-}
-
 export interface Product {
   id: number;
   name: string;
@@ -26,36 +7,30 @@ export interface Product {
   imageUrl: string;
   images?: string[];
   category: string;
-  rating: number;
-  reviews: number;
-  purchases?: string;
-  badge?: string;
-  brand?: string;
-  colors?: string[];
-  storage?: string[];
-  features?: string[];
-  freeDelivery?: boolean;
-  deliveryDate?: string;
-  sustainability?: number;
-  description?: string;
-  condition?: string;
-  conditionDescription?: string;
-  sold?: number;
-  available?: number;
-  itemNumber?: string;
-  processor?: string;
+  condition: string;
   shipping?: number;
   estimatedDelivery?: string;
+  badge?: string;
+  colors?: string[];
+  storage?: string[];
   watchers?: number;
-  seller: Seller;
+  description?: string;
+  seller?: {
+    name: string;
+    rating: number;
+    feedbackCount: number;
+  };
+}
+export interface AuthResponse {
+  token: string;
 }
 
-export type PaymentMethod =
-  | "paypal"
-  | "venmo"
-  | "card"
-  | "googlepay"
-  | "paypalcredit";
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  href: string;
+}
 
 export interface Review {
   title: string;
@@ -65,7 +40,28 @@ export interface Review {
   reviewer: string;
 }
 
-// API Response type for arbiters
+export interface Arbiter {
+  id: number;
+  name: string;
+  title: string;
+  avatar?: string;
+  rating: number;
+  reviewCount: number;
+  jobSuccess: number;
+  hourlyRate: number;
+  totalResolvedDisputes: number;
+  totalHours: number;
+  totalEarned: number;
+  location: string;
+  localTime: string;
+  isAvailable: boolean;
+  isVerified: boolean;
+  description: string;
+  skills: string[];
+  buyerReviews: Review[];
+  sellerReviews: Review[];
+}
+
 export interface ArbiterApiResponse {
   arbiterName: string;
   arbiterUserIdFk: number;
@@ -75,52 +71,78 @@ export interface ArbiterApiResponse {
   totalResolvedDisputes: number;
 }
 
-// UI-friendly Arbiter type (transformed from API response)
-export interface Arbiter {
-  id: number;
-  name: string;
-  title: string;
-  avatar: string;
-  rating: number;
-  reviewCount: number;
-  jobSuccess: number;
-  hourlyRate: number;
-  isVerified: boolean;
-  isAvailable: boolean;
-  location: string;
-  localTime: string;
-  totalJobs: number;
-  totalHours: number;
-  totalEarned: string;
-  skills: string[];
-  description: string;
-  buyerReviews: Review[];
-  sellerReviews: Review[];
-  // Additional fields from API
-  totalResolvedDisputes: number;
-  pinBuyerReview: string | null;
-  pinSellerReview: string | null;
-}
-
-// Pagination types
 export interface PaginationParams {
   page: number;
   pageSize: number;
+}
+
+export interface PaginationInfo {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
 }
 
 export interface PaginatedResponse<T> {
   data: T[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
+  pagination: PaginationInfo;
+}
+
+// Authentication types
+export interface User {
+  uName: string;
+  email: string;
+  userRole: "BUYER" | "SELLER" | "ARBITER";
+  token: string;
+}
+
+export interface LoginRequest {
+  uName: string;
+  email: string;
+  password: string;
+  userRole: "BUYER" | "SELLER" | "ARBITER";
+}
+
+export interface RegisterRequest {
+  uName: string;
+  email: string;
+  password: string;
+  userRole: "BUYER" | "SELLER" | "ARBITER";
+}
+
+export interface AuthResponse {
+  token: string;
+  user: {
+    id: string;
+    uName: string;
+    email: string;
+    userRole: "BUYER" | "SELLER" | "ARBITER";
   };
 }
 
-export interface PaginationParams {
-  page: number;
-  pageSize: number;
+// Purchase flow types
+export interface PurchaseData {
+  product: Product;
+  selectedArbiters: Arbiter[];
+  quantity: number;
+  selectedColor?: string;
+  selectedStorage?: string;
+}
+
+export interface PurchaseOfferRequest {
+  phoneIdFk: number;
+  arbiter1UserIdFk: number | null;
+  arbiter2UserIdFk: number | null;
+  arbiter3UserIdFk: number | null;
+  arbiter4UserIdFk: number | null;
+  arbiter5UserIdFk: number | null;
+  arbiter6UserIdFk: number | null;
+}
+
+export interface PurchaseOfferResponse {
+  success: boolean;
+  orderId?: string;
+  message?: string;
 }

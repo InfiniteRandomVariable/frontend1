@@ -1,94 +1,112 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
+import { useEffect, useState } from "react";
 
-import { useEffect, useState } from "react"
-
-const TOAST_LIMIT = 5
-const TOAST_REMOVE_DELAY = 5000
+const TOAST_LIMIT = 5;
+const TOAST_REMOVE_DELAY = 5000;
 
 type ToastProps = {
-  id: string
-  title?: string
-  description?: string
-  action?: React.ReactNode
-  variant?: "default" | "destructive"
-}
+  id: string;
+  title?: string;
+  description?: string;
+  action?: React.ReactNode;
+  variant?: "default" | "destructive";
+};
 
-let count = 0
+let count = 0;
 
 function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER
-  return count.toString()
+  count = (count + 1) % Number.MAX_SAFE_INTEGER;
+  return count.toString();
 }
 
 type Toast = {
-  id: string
-  title?: string
-  description?: string
-  action?: React.ReactNode
-  variant?: "default" | "destructive"
-}
+  id: string;
+  title?: string;
+  description?: string;
+  action?: React.ReactNode;
+  variant?: "default" | "destructive";
+};
 
-type ToasterToast = Toast
+type ToasterToast = Toast;
+
+// Global store for toasts
+const TOAST_STORE: {
+  toasts: ToasterToast[];
+  listeners: Array<(toasts: ToasterToast[]) => void>;
+} = {
+  toasts: [],
+  listeners: [],
+};
+
+const addToast = (toast: Omit<ToasterToast, "id">) => {
+  const id = genId();
+  const newToast = { id, ...toast };
+
+  TOAST_STORE.toasts = [...TOAST_STORE.toasts, newToast].slice(-TOAST_LIMIT);
+  TOAST_STORE.listeners.forEach((listener) => listener(TOAST_STORE.toasts));
+
+  setTimeout(() => {
+    TOAST_STORE.toasts = TOAST_STORE.toasts.filter((t) => t.id !== id);
+    TOAST_STORE.listeners.forEach((listener) => listener(TOAST_STORE.toasts));
+  }, TOAST_REMOVE_DELAY);
+
+  return id;
+};
 
 const useToast = () => {
-  const [mounted, setMounted] = useState(false)
-  const [toasts, setToasts] = useState<ToasterToast[]>([])
+  const [mounted, setMounted] = useState(false);
+  const [toasts, setToasts] = useState<ToasterToast[]>([]);
 
   useEffect(() => {
-    setMounted(true)
+    setMounted(true);
+
+    // Subscribe to toast store
+    const handleToastsChange = (newToasts: ToasterToast[]) => {
+      setToasts([...newToasts]);
+    };
+
+    TOAST_STORE.listeners.push(handleToastsChange);
+    setToasts(TOAST_STORE.toasts);
+
     return () => {
-      setMounted(false)
-    }
-  }, [])
+      setMounted(false);
+      TOAST_STORE.listeners = TOAST_STORE.listeners.filter(
+        (listener) => listener !== handleToastsChange
+      );
+    };
+  }, []);
 
-  const toast = ({ title, description, action, variant }: Omit<ToasterToast, "id">) => {
-    const id = genId()
-    const newToast = {
-      id,
-      title,
-      description,
-      action,
-      variant,
-    }
-
-    setToasts((prevToasts) => {
-      const updatedToasts = [...prevToasts, newToast].slice(-TOAST_LIMIT)
-      return updatedToasts
-    })
-
-    setTimeout(() => {
-      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id))
-    }, TOAST_REMOVE_DELAY)
-
-    return id
-  }
+  const toast = (props: Omit<ToasterToast, "id">) => {
+    return addToast(props);
+  };
 
   const dismiss = (toastId: string) => {
-    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== toastId))
-  }
+    TOAST_STORE.toasts = TOAST_STORE.toasts.filter((t) => t.id !== toastId);
+    TOAST_STORE.listeners.forEach((listener) => listener(TOAST_STORE.toasts));
+  };
 
   const dismissAll = () => {
-    setToasts([])
-  }
+    TOAST_STORE.toasts = [];
+    TOAST_STORE.listeners.forEach((listener) => listener([]));
+  };
 
   return {
     toast,
     dismiss,
     dismissAll,
     toasts: mounted ? toasts : [],
-  }
-}
-
-export { useToast }
+  };
+};
 
 // Create a toast function that can be imported directly
-export const toast = ({
-  title,
-  description,
-  variant,
-}: { title?: string; description?: string; variant?: "default" | "destructive" }) => {
-  // This is a dummy function that will be replaced by the actual toast function at runtime
-  console.log("Toast:", title, description, variant)
-}
+export const toast = (props: {
+  title?: string;
+  description?: string;
+  variant?: "default" | "destructive";
+}) => {
+  return addToast(props);
+};
+
+export { useToast };

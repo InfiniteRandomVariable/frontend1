@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -16,11 +15,11 @@ import { Heart, HelpCircle } from "lucide-react";
 import { useActions, useWatchlist } from "@/lib/store";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
-import { watchlistApi } from "@/lib/api-client";
-import type { Product } from "@/lib/types";
+import { apiClient } from "@/lib/api-client";
+import { useInitiatePurchase } from "@/hooks/use-purchase";
+import type { Product, PurchaseData } from "@/lib/types";
 
 export default function ProductDetails({ product }: { product: Product }) {
-  const router = useRouter();
   const [selectedColor, setSelectedColor] = useState(
     product.colors?.[0] || null
   );
@@ -33,12 +32,13 @@ export default function ProductDetails({ product }: { product: Product }) {
   const watchlist = useWatchlist();
   const { addToWatchlist, removeFromWatchlist } = useActions();
   const { toast } = useToast();
+  const initiatePurchase = useInitiatePurchase();
 
   const isInWatchlist = watchlist.some((item) => item.id === product.id);
 
   // Add to watchlist mutation
   const addToWatchlistMutation = useMutation({
-    mutationFn: (productId: number) => watchlistApi.addToWatchlist(productId),
+    mutationFn: (productId: number) => apiClient.addToWatchlist(productId),
     onSuccess: () => {
       addToWatchlist(product);
       toast({
@@ -57,8 +57,7 @@ export default function ProductDetails({ product }: { product: Product }) {
 
   // Remove from watchlist mutation
   const removeFromWatchlistMutation = useMutation({
-    mutationFn: (productId: number) =>
-      watchlistApi.removeFromWatchlist(productId),
+    mutationFn: (productId: number) => apiClient.removeFromWatchlist(productId),
     onSuccess: () => {
       removeFromWatchlist(product.id);
       toast({
@@ -76,12 +75,20 @@ export default function ProductDetails({ product }: { product: Product }) {
   });
 
   const handleBuyNow = () => {
-    // Navigate to arbiters selection page instead of checkout
-    router.push(`/arbiters`);
+    // Prepare purchase data
+    const purchaseData: PurchaseData = {
+      product,
+      selectedArbiters: [], // Will be filled in arbiter selection
+      quantity,
+      selectedColor: selectedColor || undefined,
+      selectedStorage: selectedStorage || undefined,
+    };
+
+    // Initiate purchase flow
+    initiatePurchase(purchaseData);
   };
 
   const handleWatchlistToggle = () => {
-    console.log("clicking handleWatchlistToggle 73");
     if (isInWatchlist) {
       removeFromWatchlistMutation.mutate(product.id);
     } else {
