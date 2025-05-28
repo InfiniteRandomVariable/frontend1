@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +18,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { useInitiatePurchase } from "@/hooks/use-purchase";
+
 import type { Product, PurchaseData } from "@/lib/types";
 
 export default function ProductDetails({ product }: { product: Product }) {
@@ -76,6 +78,7 @@ export default function ProductDetails({ product }: { product: Product }) {
 
   const handleBuyNow = () => {
     // Prepare purchase data
+
     const purchaseData: PurchaseData = {
       product,
       selectedArbiters: [], // Will be filled in arbiter selection

@@ -11,7 +11,7 @@ import {
   useSetPurchaseData,
   useClearPurchaseData,
 } from "@/lib/store";
-import type { PurchaseData, PurchaseOfferRequest } from "@/lib/types";
+import type { PurchaseData, PurchaseOfferRequest, Arbiter } from "@/lib/types";
 
 export const useInitiatePurchase = () => {
   const router = useRouter();
@@ -40,9 +40,6 @@ export const useCompletePurchase = () => {
     onSuccess: (response) => {
       console.log("Purchase API success:", response);
 
-      // Clear purchase data from store
-      clearPurchaseData();
-
       toast({
         title: "Purchase successful!",
         description: "Your purchase offer has been submitted successfully.",
@@ -51,7 +48,14 @@ export const useCompletePurchase = () => {
       // Redirect to confirmation page with order ID
       const orderId = response.orderId || "ORD" + Date.now();
       console.log("Redirecting to confirmation with orderId:", orderId);
+
+      // Navigate first, then clear data after a delay to prevent redirect issues
       router.push(`/checkout/confirmation?orderId=${orderId}`);
+
+      // Clear purchase data after navigation
+      setTimeout(() => {
+        clearPurchaseData();
+      }, 1000);
     },
     onError: (error: Error) => {
       console.error("Purchase API error:", error);
@@ -64,11 +68,18 @@ export const useCompletePurchase = () => {
     },
   });
 
-  return () => {
+  // Return a function that accepts arbiters as parameter to ensure we use the latest data
+  return (arbitersToUse?: Arbiter[]) => {
     console.log("=== useCompletePurchase called ===");
+
+    // Use passed arbiters or fall back to store arbiters
+    const arbitersForPurchase = arbitersToUse || selectedArbiters;
+
     console.log("isAuthenticated:", isAuthenticated);
     console.log("purchaseData:", purchaseData);
-    console.log("selectedArbiters:", selectedArbiters);
+    console.log("selectedArbiters from store:", selectedArbiters);
+    console.log("arbitersToUse (passed):", arbitersToUse);
+    console.log("arbitersForPurchase (final):", arbitersForPurchase);
 
     // Check if we have purchase data and selected arbiters
     if (!purchaseData) {
@@ -82,7 +93,7 @@ export const useCompletePurchase = () => {
       return;
     }
 
-    if (selectedArbiters.length === 0) {
+    if (arbitersForPurchase.length === 0) {
       console.log("No arbiters selected");
       toast({
         title: "No arbiters selected",
@@ -120,12 +131,12 @@ export const useCompletePurchase = () => {
     // User is authenticated, proceed with purchase
     const request: PurchaseOfferRequest = {
       phoneIdFk: purchaseData.product.id,
-      arbiter1UserIdFk: selectedArbiters[0]?.id || null,
-      arbiter2UserIdFk: selectedArbiters[1]?.id || null,
-      arbiter3UserIdFk: selectedArbiters[2]?.id || null,
-      arbiter4UserIdFk: selectedArbiters[3]?.id || null,
-      arbiter5UserIdFk: selectedArbiters[4]?.id || null,
-      arbiter6UserIdFk: selectedArbiters[5]?.id || null,
+      arbiter1UserIdFk: arbitersForPurchase[0]?.id || null,
+      arbiter2UserIdFk: arbitersForPurchase[1]?.id || null,
+      arbiter3UserIdFk: arbitersForPurchase[2]?.id || null,
+      arbiter4UserIdFk: arbitersForPurchase[3]?.id || null,
+      arbiter5UserIdFk: arbitersForPurchase[4]?.id || null,
+      arbiter6UserIdFk: arbitersForPurchase[5]?.id || null,
     };
 
     console.log("Submitting purchase request:", request);
