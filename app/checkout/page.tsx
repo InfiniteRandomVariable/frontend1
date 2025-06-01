@@ -1,20 +1,21 @@
-import { Suspense } from "react"
-import { notFound } from "next/navigation"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import { Skeleton } from "@/components/ui/skeleton"
-import CheckoutContent from "./components/checkout-content"
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import { Skeleton } from "@/components/ui/skeleton";
+import CheckoutContent from "./components/checkout-content";
 
-export default function CheckoutPage({
+export default async function CheckoutPage({
   searchParams,
 }: {
-  searchParams: { productId?: string; quantity?: string }
+  searchParams: Promise<{ productId?: string; quantity?: string }>;
 }) {
-  const productId = searchParams.productId
-  const quantity = searchParams.quantity ? Number.parseInt(searchParams.quantity) : 1
+  const params = await searchParams;
+  const productId = params.productId;
+  const quantity = params.quantity ? Number.parseInt(params.quantity) : 1;
 
   if (!productId) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -27,7 +28,7 @@ export default function CheckoutPage({
       </main>
       <Footer />
     </div>
-  )
+  );
 }
 
 function CheckoutSkeleton() {
@@ -46,5 +47,5 @@ function CheckoutSkeleton() {
       </div>
       <Skeleton className="h-12 w-full" />
     </div>
-  )
+  );
 }

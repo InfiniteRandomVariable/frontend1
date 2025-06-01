@@ -57,7 +57,14 @@ export default function PurchaseConfirmPage() {
 
     // All checks passed, complete the purchase
     completePurchase();
-  }, [isAuthenticated, purchaseData, selectedArbiters]);
+  }, [
+    isAuthenticated,
+    purchaseData,
+    selectedArbiters,
+    completePurchase,
+    router,
+    toast,
+  ]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">

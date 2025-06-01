@@ -23,7 +23,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pagination } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationEllipsis,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 import {
   Search,
   Star,
@@ -43,6 +51,8 @@ import {
 import { useCompletePurchase } from "@/hooks/use-purchase";
 import type { Arbiter } from "@/lib/types";
 
+const pageSize = 10;
+
 export default function ArbiterSelectionContent() {
   const router = useRouter();
   const { toast } = useToast();
@@ -57,7 +67,6 @@ export default function ArbiterSelectionContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [purchaseCompleted, setPurchaseCompleted] = useState(false);
-  const pageSize = 10;
 
   // Get purchase data and auth status
   const purchaseData = usePurchaseData();
@@ -65,7 +74,6 @@ export default function ArbiterSelectionContent() {
   const setSelectedArbitersStore = useSetSelectedArbiters();
   const completePurchase = useCompletePurchase();
 
-  // Fetch arbiters with pagination
   const {
     data: paginatedArbiters,
     isLoading,

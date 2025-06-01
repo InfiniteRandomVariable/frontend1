@@ -4,14 +4,7 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 
-export default async function ConfirmationPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ orderId?: string }>;
-}) {
-  const params = await searchParams;
-  const orderId = params.orderId || "ORD123456";
-
+export default function ConfirmationPage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
@@ -20,28 +13,28 @@ export default async function ConfirmationPage({
           <div className="flex flex-col items-center text-center mb-8">
             <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
             <h1 className="text-2xl font-bold mb-2">
-              Thank you for your order!
+              Thank you for your selection!
             </h1>
             <p className="text-gray-600">
-              Your order has been placed and is being processed. You will
-              receive an email confirmation shortly.
+              We are waiting for the seller to accept your offer. You will be
+              notified once the seller responds.
             </p>
           </div>
 
           <div className="border-t border-b py-4 my-6">
             <div className="flex justify-between mb-2">
               <span className="font-semibold">Order Number:</span>
-              <span>{orderId}</span>
+              <span>ORD{Math.floor(Math.random() * 1000000)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-semibold">Order Date:</span>
+              <span className="font-semibold">Selection Date:</span>
               <span>{new Date().toLocaleDateString()}</span>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/">
-              <Button variant="outline">Continue Shopping</Button>
+              <Button variant="outline">Return to Home</Button>
             </Link>
             <Link href="/account/orders">
               <Button>View Order Status</Button>

@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useParams } from "next/navigation"
-import { notFound } from "next/navigation"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useProductDetails } from "@/hooks/use-products"
-import ProductDetails from "@/app/product/[id]/components/product-details"
-import ProductAbout from "@/app/product/[id]/components/product-about"
-import SellerInfo from "@/app/product/[id]/components/seller-info"
+import { useParams } from "next/navigation";
+import { notFound } from "next/navigation";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useProductDetails } from "@/hooks/use-products";
+import ProductDetails from "@/app/product/[id]/components/product-details";
+import ProductAbout from "@/app/product/[id]/components/product-about";
+import SellerInfo from "@/app/product/[id]/components/seller-info";
 
 export default function ProductPage() {
-  const { id } = useParams()
+  const { id } = useParams();
 
-  const { data: product, isLoading, isError } = useProductDetails(id as string)
+  const { data: product, isLoading, isError } = useProductDetails(id as string);
 
   if (isLoading) {
     return (
@@ -24,11 +24,11 @@ export default function ProductPage() {
         </main>
         <Footer />
       </div>
-    )
+    );
   }
 
   if (isError || !product) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -47,7 +47,7 @@ export default function ProductPage() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
 
 function ProductDetailsSkeleton() {
@@ -78,5 +78,5 @@ function ProductDetailsSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

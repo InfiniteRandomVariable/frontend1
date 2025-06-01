@@ -1,8 +1,8 @@
-import { Suspense } from "react"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import { Skeleton } from "@/components/ui/skeleton"
-import WatchlistContent from "./components/watchlist-content"
+import { Suspense } from "react";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import { Skeleton } from "@/components/ui/skeleton";
+import WatchlistContent from "./components/watchlist-content";
 
 export default function WatchlistPage() {
   return (
@@ -15,7 +15,7 @@ export default function WatchlistPage() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
 
 function WatchlistSkeleton() {
@@ -36,5 +36,5 @@ function WatchlistSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
