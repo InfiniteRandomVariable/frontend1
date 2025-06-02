@@ -94,24 +94,13 @@ export default function ArbiterSelectionContent() {
       arbiter.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (!hasHydrated) {
-    return (
-      <div className="text-center py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
-
   // Redirect if no purchase data (but not if purchase was just completed)
   useEffect(() => {
-    if (!purchaseData && !purchaseCompleted && hasHydrated) {
+    if (!purchaseData && !purchaseCompleted) {
       console.log("No purchase data found, redirecting to home");
       router.push("/");
     }
-  }, [purchaseData, router, purchaseCompleted, hasHydrated]);
+  }, [purchaseData, router, purchaseCompleted]);
   // Handle system selection
   useEffect(() => {
     if (selectionMode === "system" && arbiters.length > 0) {
