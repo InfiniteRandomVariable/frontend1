@@ -1,6 +1,6 @@
 # E-commerce Marketplace
 
-This is a Next.js frontend for an e-commerce marketplace, designed to work with a separate backend API.
+This is a Next.js frontend for an e-commerce marketplace, designed to work with a separate backend API for a senior level engineering project with many years of top level experience. 
 
 ## Features
 
@@ -38,7 +38,7 @@ npm run dev
 yarn dev
 \`\`\`
 
-3. The application will now use mock data instead of making actual API calls.
+3. The application will use actual API calls instead of mock data as much as possible.
 
 ### Disabling Preview Mode
 
@@ -105,3 +105,6 @@ Then start the production server:
 npm run start
 # or
 yarn start
+
+6. If possible, make all the file changes under App folder. Add new files to App folder. This is very important. 
+7. Use Zustand and ReactQuery. 
