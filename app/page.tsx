@@ -17,7 +17,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <main className="flex-1 container mx-auto px-4 pb-8">
-        <Suspense
+        {/* <Suspense
           fallback={
             <div className="p-12">
               <Skeleton className="h-[800px] w-full" />
@@ -25,7 +25,7 @@ export default function Home() {
           }
         >
           <LandingPage />
-        </Suspense>
+        </Suspense> */}
 
         <div className="mt-4">
           <div className="flex overflow-x-auto gap-4 py-2 -mx-4 px-4 mb-6 scrollbar-hide">
